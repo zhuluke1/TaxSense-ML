@@ -1,4 +1,5 @@
 from sklearn.linear_model import LinearRegression
+from joblib import dump, load
 import pandas as pd
 import numpy as np
 
@@ -17,12 +18,10 @@ class TaxPredictor:
 
     def save_model(self, filepath):
         """Save the trained model to a file."""
-        from joblib import dump
         dump(self.model, filepath)
 
     def load_model(self, filepath):
         """Load a trained model from a file."""
-        from joblib import load
         self.model = load(filepath)
 
 # Test the class if run directly
