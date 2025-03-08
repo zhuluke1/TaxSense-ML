@@ -1,25 +1,26 @@
-class TaxCalculator:
-    def __init__(self):
-        """Initialize with 2024 tax brackets (single filer)."""
-        self.tax_brackets = [
-            (0, 11600, 0.10),
-            (11600, 47150, 0.12),
-            (47150, 100525, 0.22),
-            (100525, 191950, 0.24),
-            (191950, 243725, 0.32),
-            (243725, 609350, 0.35),
-            (609350, float('inf'), 0.37)
-        ]
+import pandas as pd
+import numpy as np
 
-    def calculate_tax(self, income, deductions):
+class TaxCalculator:
+    def __init__(self, tax_tables_file='data/tax_tables_2024.csv'):
+        """Initialize with tax brackets from file."""
+        self.tax_tables = pd.read_csv(tax_tables_file)
+        
+    def calculate_tax(self, income, deductions, filing_status='single'):
         """Calculate tax using traditional tax bracket method."""
         taxable_income = max(0, income - deductions)
         total_tax = 0
         
-        for start, end, rate in self.tax_brackets:
-            if taxable_income > start:
-                taxable_in_bracket = min(taxable_income - start, end - start)
-                total_tax += taxable_in_bracket * rate
+        # Get brackets for filing status
+        status_brackets = self.tax_tables[self.tax_tables['filing_status'] == filing_status].sort_values('bracket_start')
+        
+        for _, bracket in status_brackets.iterrows():
+            if taxable_income > bracket['bracket_start']:
+                taxable_in_bracket = min(
+                    taxable_income - bracket['bracket_start'],
+                    bracket['bracket_end'] - bracket['bracket_start']
+                )
+                total_tax += taxable_in_bracket * bracket['tax_rate']
             else:
                 break
                 
@@ -27,9 +28,6 @@ class TaxCalculator:
 
     def generate_training_data(self, num_samples=1000):
         """Generate synthetic data for model training."""
-        import numpy as np
-        import pandas as pd
-        
         # Generate random incomes between 20k and 500k
         incomes = np.random.uniform(20000, 500000, num_samples)
         
@@ -37,13 +35,21 @@ class TaxCalculator:
         deduction_rates = np.random.uniform(0.05, 0.30, num_samples)
         deductions = incomes * deduction_rates
         
+        # Generate random filing statuses
+        statuses = np.random.choice(['single', 'married', 'head_of_household'], num_samples)
+        
         # Calculate actual tax for each case
-        taxes = [self.calculate_tax(inc, ded) 
-                for inc, ded in zip(incomes, deductions)]
+        taxes = [self.calculate_tax(inc, ded, status) 
+                for inc, ded, status in zip(incomes, deductions, statuses)]
         
         # Create DataFrame
         return pd.DataFrame({
             'income': incomes,
             'deductions': deductions,
+            'filing_status': statuses,
             'tax_liability': taxes
         })
+
+    def load_sample_data(self, filepath='data/sample_finances.csv'):
+        """Load and return sample financial data."""
+        return pd.read_csv(filepath)

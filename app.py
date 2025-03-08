@@ -25,16 +25,22 @@ except:
 
 # Input form
 st.subheader("Enter Your Financial Information")
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     income = st.number_input("Annual Income ($)", min_value=0, value=50000)
 with col2:
     deductions = st.number_input("Total Deductions ($)", min_value=0, value=12000)
+with col3:
+    filing_status = st.selectbox(
+        "Filing Status",
+        options=['single', 'married', 'head_of_household'],
+        index=0
+    )
 
 if st.button("Calculate Tax"):
     # Traditional calculation
-    traditional_tax = calculator.calculate_tax(income, deductions)
+    traditional_tax = calculator.calculate_tax(income, deductions, filing_status)
     
     # ML prediction if model is loaded
     if model_loaded:
@@ -58,6 +64,11 @@ if st.button("Calculate Tax"):
     else:
         st.metric("Calculated Tax", f"${traditional_tax:,.2f}")
 
+# Sample Data Viewer
+with st.expander("View Sample Tax Data"):
+    sample_data = calculator.load_sample_data()
+    st.dataframe(sample_data)
+
 # Additional Information
 with st.expander("How it works"):
     st.write("""
@@ -67,6 +78,13 @@ with st.expander("How it works"):
     
     The ML model is trained on patterns in historical tax data and can capture 
     complex relationships between income, deductions, and tax liability.
+    
+    The system supports three filing statuses:
+    - Single
+    - Married Filing Jointly
+    - Head of Household
+    
+    Tax brackets and rates are based on 2024 IRS guidelines.
     """)
 
 # Footer
