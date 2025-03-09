@@ -46,8 +46,11 @@ if st.button("Calculate Tax"):
     if model_loaded:
         try:
             input_data = pd.DataFrame([[income, deductions]], columns=['income', 'deductions'])
-            processed_input = processor.preprocess_features(input_data)  # Add this method
+            st.write("Input data:", input_data)  # Debug: Show input
+            processed_input = processor.preprocess_features(input_data)
+            st.write("Processed input:", processed_input)  # Debug: Show scaled input
             predicted_tax = predictor.predict_tax(processed_input)[0]
+            st.write("Predicted tax (raw):", predicted_tax)  # Debug: Show prediction
             
             # Display results
             col1, col2 = st.columns(2)
@@ -61,6 +64,7 @@ if st.button("Calculate Tax"):
             ax.bar(['Traditional', 'ML Prediction'], [traditional_tax, predicted_tax])
             ax.set_ylabel('Tax Amount ($)')
             ax.set_title('Tax Calculation Comparison')
+            ax.set_ylim(0, max(traditional_tax, predicted_tax) * 1.1)
             st.pyplot(fig)
         except Exception as e:
             st.error(f"ML prediction failed: {e}")
