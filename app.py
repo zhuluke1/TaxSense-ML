@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from src.ml_models import TaxPredictor
 from src.tax_calculator import TaxCalculator
 from src.data_processing import DataProcessor
+from io import BytesIO  # Add for Excel export
 
 # Set page config with a custom icon
 st.set_page_config(page_title="TaxSense ML", page_icon="💰", layout="centered")
@@ -138,6 +139,25 @@ if calculate:
                         unsafe_allow_html=True
                     )
 
+                # Export to Excel
+                result_df = pd.DataFrame({
+                    'Method': ['Traditional Tax Calculation', 'ML-Based Prediction'],
+                    'Tax Amount ($)': [traditional_tax, predicted_tax]
+                })
+                # Use BytesIO to create an in-memory Excel file
+                output = BytesIO()
+                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                    result_df.to_excel(writer, index=False, sheet_name='Tax Results')
+                excel_data = output.getvalue()
+
+                st.download_button(
+                    label="Export to Excel",
+                    data=excel_data,
+                    file_name="tax_calculation_results.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    key="download-excel"
+                )
+
                 # Plot comparison
                 st.markdown("### Tax Calculation Comparison")
                 fig, ax = plt.subplots(figsize=(6, 4))
@@ -150,17 +170,20 @@ if calculate:
                 st.pyplot(fig)
         except Exception as e:
             st.error(f"ML prediction failed: {e}")
+            # Only show traditional tax without redundant "Calculated Tax"
+            with st.container():
+                st.markdown(
+                    '<div class="metric-box"><div class="metric-label">Traditional Tax Calculation</div>'
+                    f'<div class="metric-value">${traditional_tax:,.2f}</div></div>',
+                    unsafe_allow_html=True
+                )
+    else:
+        with st.container():
             st.markdown(
-                '<div class="metric-box"><div class="metric-label">Calculated Tax</div>'
+                '<div class="metric-box"><div class="metric-label">Traditional Tax Calculation</div>'
                 f'<div class="metric-value">${traditional_tax:,.2f}</div></div>',
                 unsafe_allow_html=True
             )
-    else:
-        st.markdown(
-            '<div class="metric-box"><div class="metric-label">Calculated Tax</div>'
-            f'<div class="metric-value">${traditional_tax:,.2f}</div></div>',
-            unsafe_allow_html=True
-        )
 
 # Sample Data Viewer
 with st.expander("View Sample Tax Data"):
