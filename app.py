@@ -19,8 +19,8 @@ try:
     predictor.load_model('models/tax_model.joblib')
     processor.load_scaler('models/scaler.joblib')
     model_loaded = True
-except:
-    st.warning("No trained model found. Using traditional calculation method.")
+except FileNotFoundError:
+    st.warning("No trained model or scaler found. Using traditional calculation method.")
     model_loaded = False
 
 # Input form
@@ -44,30 +44,37 @@ if st.button("Calculate Tax"):
     
     # ML prediction if model is loaded
     if model_loaded:
-        input_data = pd.DataFrame([[income, deductions]], columns=['income', 'deductions'])
-        processed_input = processor.preprocess_features(input_data)
-        predicted_tax = predictor.predict_tax(processed_input)[0]
-        
-        # Display results
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Traditional Tax Calculation", f"${traditional_tax:,.2f}")
-        with col2:
-            st.metric("ML-Based Prediction", f"${predicted_tax:,.2f}")
+        try:
+            input_data = pd.DataFrame([[income, deductions]], columns=['income', 'deductions'])
+            processed_input = processor.preprocess_features(input_data)  # Add this method
+            predicted_tax = predictor.predict_tax(processed_input)[0]
             
-        # Plot comparison
-        fig, ax = plt.subplots()
-        ax.bar(['Traditional', 'ML Prediction'], [traditional_tax, predicted_tax])
-        ax.set_ylabel('Tax Amount ($)')
-        ax.set_title('Tax Calculation Comparison')
-        st.pyplot(fig)
+            # Display results
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Traditional Tax Calculation", f"${traditional_tax:,.2f}")
+            with col2:
+                st.metric("ML-Based Prediction", f"${predicted_tax:,.2f}")
+                
+            # Plot comparison
+            fig, ax = plt.subplots(figsize=(8, 4))
+            ax.bar(['Traditional', 'ML Prediction'], [traditional_tax, predicted_tax])
+            ax.set_ylabel('Tax Amount ($)')
+            ax.set_title('Tax Calculation Comparison')
+            st.pyplot(fig)
+        except Exception as e:
+            st.error(f"ML prediction failed: {e}")
+            st.metric("Calculated Tax", f"${traditional_tax:,.2f}")
     else:
         st.metric("Calculated Tax", f"${traditional_tax:,.2f}")
 
 # Sample Data Viewer
 with st.expander("View Sample Tax Data"):
     sample_data = calculator.load_sample_data()
-    st.dataframe(sample_data)
+    if sample_data is not None:
+        st.dataframe(sample_data)
+    else:
+        st.write("No sample data available.")
 
 # Additional Information
 with st.expander("How it works"):

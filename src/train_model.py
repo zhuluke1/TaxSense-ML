@@ -8,6 +8,7 @@ def train_initial_model(samples=10000):
     print("Generating synthetic training data...")
     calculator = TaxCalculator()
     data = calculator.generate_training_data(num_samples=samples)
+    print(data.describe())  # Check ranges of income, deductions, tax_liability
     
     print("Processing data...")
     processor = DataProcessor()
@@ -30,3 +31,4 @@ def train_initial_model(samples=10000):
 
 if __name__ == "__main__":
     train_initial_model()
+
