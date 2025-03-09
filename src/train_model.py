@@ -29,4 +29,4 @@ def train_initial_model(samples=10000):
     print("Training complete! You can now use the model for predictions.")
 
 if __name__ == "__main__":
-    train_initial_model() 
+    train_initial_model()
