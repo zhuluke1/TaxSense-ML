@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import openpyxl
 from src.ml_models import TaxPredictor
 from src.tax_calculator import TaxCalculator
 from src.data_processing import DataProcessor
