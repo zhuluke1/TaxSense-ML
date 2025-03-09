@@ -46,7 +46,7 @@ class TaxCalculator:
         if self.tax_tables is None:
             print("Error: No tax tables available")
             return None
-        incomes = np.random.uniform(20000, 500000, num_samples)
+        incomes = np.random.uniform(20000, 150000, num_samples)  # Lower max to 150k
         deduction_rates = np.random.uniform(0.05, 0.30, num_samples)
         deductions = incomes * deduction_rates
         statuses = np.random.choice(['single', 'married', 'head_of_household'], num_samples)
@@ -59,7 +59,7 @@ class TaxCalculator:
             'deductions': deductions,
             'filing_status': statuses,
             'tax_liability': taxes
-        })
+    })
 
     def load_sample_data(self, filepath='data/sample_finances.csv'):
         """Load and return sample financial data."""
