@@ -12,12 +12,14 @@ def train_initial_model(samples=10000):
     
     print("Processing data...")
     processor = DataProcessor()
-    X = processor.preprocess_features(data)
-    y = data['tax_liability']
+    # Fit the scaler on the training data
+    features = data[['income', 'deductions']]
+    processor.scaler.fit(features)  # Fit the scaler here
+    X = processor.preprocess_features(data)  # Now transform
     
     print("Training model...")
     predictor = TaxPredictor()
-    predictor.train(X, y)
+    predictor.train(X, data['tax_liability'])
     
     # Create models directory if it doesn't exist
     os.makedirs('models', exist_ok=True)
@@ -31,4 +33,3 @@ def train_initial_model(samples=10000):
 
 if __name__ == "__main__":
     train_initial_model()
-

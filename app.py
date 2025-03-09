@@ -46,11 +46,12 @@ if st.button("Calculate Tax"):
     if model_loaded:
         try:
             input_data = pd.DataFrame([[income, deductions]], columns=['income', 'deductions'])
-            st.write("Input data:", input_data)  # Debug: Show input
-            processed_input = processor.preprocess_features(input_data)
-            st.write("Processed input:", processed_input)  # Debug: Show scaled input
+            st.write("Input data:", input_data)  # Debug: Raw input
+            processed_input = processor.preprocess_features(input_data).values
+            st.write("Processed input shape:", processed_input.shape)  # Debug: Shape
+            st.write("Processed input values:", processed_input)  # Debug: Scaled values
             predicted_tax = predictor.predict_tax(processed_input)[0]
-            st.write("Predicted tax (raw):", predicted_tax)  # Debug: Show prediction
+            st.write("Predicted tax (raw):", predicted_tax)  # Debug: Prediction
             
             # Display results
             col1, col2 = st.columns(2)
