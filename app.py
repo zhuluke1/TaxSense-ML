@@ -8,297 +8,328 @@ from src.data_processing import DataProcessor
 from io import BytesIO  # Add for Excel export
 
 # Set page config with a custom icon
-st.set_page_config(page_title="TaxGenius ML", page_icon="💰", layout="wide")
+st.set_page_config(page_title="TaxSense ML", page_icon="💰", layout="centered")
 
-# Custom CSS for sleek, modern styling
+# Custom CSS for sleek white theme styling
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    /* Import modern font */
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
     
-    * {
-        font-family: 'Inter', sans-serif;
+    /* Global styles */
+    html, body, [class*="css"] {
+        color: #1f2937;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         -webkit-font-smoothing: antialiased;
     }
     
     /* Main container styling */
-    .main > div {
-        padding: 1rem 2rem 4rem;
-        max-width: 1200px;
+    .main {
+        background-color: #ffffff;
+        background-image: 
+            url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%239C92AC' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E"),
+            linear-gradient(135deg, rgba(240, 249, 255, 0.5) 0%, rgba(255, 255, 255, 0.8) 100%);
+    }
+    
+    .block-container {
+        padding: 2rem 1rem 10rem;
+        max-width: 1000px;
         margin: 0 auto;
     }
     
-    /* Header styling */
+    /* Header styling with gradient text */
     .main-title {
-        font-size: 2.75rem;
-        font-weight: 700;
-        background: linear-gradient(90deg, #0066FF, #2684FF);
+        background: linear-gradient(90deg, #0369a1, #0ea5e9);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 0.5rem;
+        font-size: 40px;
+        font-weight: 800;
         text-align: center;
+        margin-bottom: 10px;
         letter-spacing: -0.02em;
     }
     
     .sub-title {
-        font-size: 1.1rem;
-        color: rgba(49, 51, 63, 0.7);
+        color: #64748b;
+        font-size: 18px;
         text-align: center;
-        margin-bottom: 2.5rem;
+        margin-bottom: 30px;
         font-weight: 400;
     }
     
-    /* Card styling */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(10px);
-        border-radius: 12px;
-        border: 1px solid rgba(209, 213, 219, 0.3);
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 20px -2px rgba(39, 40, 44, 0.05);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    
-    .glass-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 25px -3px rgba(39, 40, 44, 0.07);
-    }
-    
-    /* Section headers */
-    .section-header {
-        font-size: 1.25rem;
+    /* Section header */
+    h3, .section-header {
+        color: #0f172a;
         font-weight: 600;
-        color: #1E293B;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid rgba(209, 213, 219, 0.4);
+        margin-top: 1.5rem;
+        font-size: 20px;
     }
     
-    /* Metric box styling */
-    .metric-container {
-        display: flex;
-        gap: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .metric-box {
-        background: rgba(255, 255, 255, 0.8);
+    /* Input form styling */
+    .stNumberInput > div > div > input {
+        background-color: #ffffff;
+        color: #1e293b;
+        border: 1px solid #e2e8f0;
         border-radius: 10px;
-        padding: 1.25rem;
-        flex: 1;
-        text-align: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        border: 1px solid rgba(209, 213, 219, 0.5);
+        padding: 10px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         transition: all 0.2s ease;
     }
     
-    .metric-box:hover {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    }
-    
-    .metric-label {
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: #64748B;
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
-    
-    .metric-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #0F172A;
-        line-height: 1.2;
-    }
-    
-    .metric-box.traditional {
-        border-left: 4px solid #3B82F6;
-    }
-    
-    .metric-box.ml {
-        border-left: 4px solid #10B981;
-    }
-    
-    /* Form styling */
-    .stNumberInput > div > div > input {
-        height: 3rem;
-        border-radius: 8px;
-        border: 1px solid #E2E8F0;
-        padding: 0 1rem;
-        font-size: 1rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-    
     .stNumberInput > div > div > input:focus {
-        border-color: #3B82F6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
     }
     
     .stSelectbox > div > div {
-        height: 3rem;
-        border-radius: 8px;
-        border: 1px solid #E2E8F0;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        background-color: #ffffff;
+        color: #1e293b;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
     }
     
-    .stSelectbox > div > div:focus {
-        border-color: #3B82F6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    .stSelectbox > div > div:focus-within {
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+    }
+    
+    /* Card container */
+    .card-container {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f1f5f9;
+        margin-bottom: 24px;
+    }
+    
+    /* Metric box styling */
+    .metric-box {
+        background: white;
+        backdrop-filter: blur(10px);
+        padding: 24px;
+        border-radius: 14px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03), 
+                    0 4px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f1f5f9;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .metric-box:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 35px rgba(0, 0, 0, 0.04), 
+                    0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .metric-label {
+        font-size: 16px;
+        color: #64748b;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+    
+    .metric-value {
+        background: linear-gradient(135deg, #0369a1, #0ea5e9);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 32px;
+        font-weight: bold;
+        letter-spacing: -0.02em;
+    }
+    
+    .metric-value-alt {
+        background: linear-gradient(135deg, #0d9488, #0ea5e9);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 32px;
+        font-weight: bold;
+        letter-spacing: -0.02em;
     }
     
     /* Button styling */
     .stButton > button {
-        height: 2.75rem;
-        padding: 0 1.5rem;
-        background: #3B82F6;
+        background: linear-gradient(90deg, #0369a1, #0ea5e9);
         color: white;
         border: none;
-        border-radius: 8px;
-        font-weight: 500;
-        font-size: 0.95rem;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 5px rgba(59, 130, 246, 0.3);
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
+        transition: all 0.3s ease;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.5px;
     }
     
     .stButton > button:hover {
-        background: #2563EB;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+        background: linear-gradient(90deg, #0284c7, #38bdf8);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(14, 165, 233, 0.3);
     }
     
     .stButton > button:active {
-        transform: translateY(0px);
+        transform: translateY(0);
+        box-shadow: 0 2px 5px rgba(14, 165, 233, 0.2);
     }
     
     .stDownloadButton > button {
-        background: #10B981;
-        border-radius: 8px;
-        font-weight: 500;
-        box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
+        background: linear-gradient(90deg, #0d9488, #0ea5e9);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(13, 148, 136, 0.2);
+        transition: all 0.3s ease;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.5px;
     }
     
     .stDownloadButton > button:hover {
-        background: #059669;
-        box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
-    }
-    
-    /* Chart styling */
-    .chart-container {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        margin-top: 1.5rem;
+        background: linear-gradient(90deg, #0f766e, #06b6d4);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(13, 148, 136, 0.3);
     }
     
     /* Expander styling */
     .streamlit-expanderHeader {
-        font-weight: 600;
-        color: #1E293B;
-        background: rgba(243, 244, 246, 0.7);
-        border-radius: 8px;
-        padding: 0.75rem 1rem;
-        transition: background 0.2s ease;
+        background: #f8fafc;
+        border-radius: 10px;
+        color: #0f172a;
+        font-weight: 500;
+        transition: background 0.2s;
+        border: 1px solid #f1f5f9;
+        padding: 12px 20px;
     }
     
     .streamlit-expanderHeader:hover {
-        background: rgba(243, 244, 246, 1);
+        background: #f1f5f9;
     }
     
     .streamlit-expanderContent {
-        padding: 1.25rem 0.5rem;
+        background: #ffffff;
+        border-radius: 0 0 10px 10px;
+        padding: 1.5rem;
+        border: 1px solid #f1f5f9;
+        border-top: none;
+    }
+    
+    /* Warning messages */
+    .stAlert {
+        background-color: rgba(250, 204, 21, 0.1);
+        border: 1px solid rgba(250, 204, 21, 0.2);
+        border-radius: 10px;
+    }
+    
+    .stAlert > div > div > div > div {
+        color: #854d0e;
+    }
+    
+    /* Error messages */
+    .element-container .stAlert[data-baseweb="notification"] {
+        background-color: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 10px;
+    }
+    
+    .element-container .stAlert[data-baseweb="notification"] > div > div > div > div {
+        color: #b91c1c;
+    }
+    
+    /* DataFrame styling */
+    .dataframe {
+        background-color: #ffffff;
+        color: #1e293b;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #f1f5f9;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    }
+    
+    .dataframe th {
+        background-color: #f8fafc;
+        color: #0f172a;
+        padding: 12px;
+        font-weight: 600;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .dataframe td {
+        background-color: #ffffff;
+        color: #1e293b;
+        padding: 12px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    
+    /* Divider styling */
+    hr {
+        border-color: #e2e8f0;
+        margin: 2rem 0;
     }
     
     /* Footer styling */
     .footer {
         text-align: center;
-        font-size: 0.8rem;
-        color: #64748B;
-        margin-top: 4rem;
-        padding: 1.5rem 0;
-        border-top: 1px solid rgba(209, 213, 219, 0.3);
+        font-size: 13px;
+        color: #94a3b8;
+        margin-top: 50px;
+        padding-top: 20px;
+        border-top: 1px solid #f1f5f9;
     }
     
-    /* Progress animation */
-    @keyframes shimmer {
-        0% {
-            background-position: -468px 0;
-        }
-        100% {
-            background-position: 468px 0;
-        }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
     }
     
-    .loading-animation {
-        background: linear-gradient(to right, #f6f7f8 8%, #edeef1 18%, #f6f7f8 33%);
-        background-size: 800px 104px;
-        animation: shimmer 1.5s infinite linear;
-        border-radius: 8px;
-        height: 60px;
+    ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
     }
     
-    /* Accent color for highlights */
-    .accent-text {
-        color: #3B82F6;
-        font-weight: 500;
+    ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
     }
     
-    /* DataTable styling */
-    .dataframe {
-        border-collapse: collapse;
-        width: 100%;
-        border-radius: 8px;
-        overflow: hidden;
-        font-size: 0.9rem;
+    ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
     }
     
-    .dataframe th {
-        background-color: #F8FAFC;
-        padding: 0.75rem 1rem;
-        text-align: left;
-        font-weight: 600;
-        color: #1E293B;
-        border-bottom: 1px solid #E2E8F0;
+    /* Container divs for better organization */
+    .input-container {
+        background-color: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f1f5f9;
+        margin-bottom: 24px;
     }
     
-    .dataframe td {
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid #F1F5F9;
-    }
-    
-    .dataframe tr:hover {
-        background-color: #F8FAFC;
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .main-title {
-            font-size: 2rem;
-        }
-        
-        .sub-title {
-            font-size: 1rem;
-        }
-        
-        .metric-container {
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .metric-box {
-            padding: 1rem;
-        }
+    .results-container {
+        background-color: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f1f5f9;
+        margin-top: 24px;
+        margin-bottom: 24px;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Header with updated styling
-st.markdown('<div class="main-title">TaxGenius ML</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Advanced tax liability prediction using machine learning</div>', unsafe_allow_html=True)
+# Title and subtitle with custom styling
+st.markdown('<div class="main-title">TaxSense ML: Tax Prediction System</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">Predict your tax liability using machine learning</div>', unsafe_allow_html=True)
 
 # Initialize components
 predictor = TaxPredictor()
@@ -314,17 +345,16 @@ except FileNotFoundError:
     st.warning("No trained model or scaler found. Using traditional calculation method.")
     model_loaded = False
 
-# Input form in a glass card container
-st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-st.markdown('<div class="section-header">📊 Enter Your Financial Information</div>', unsafe_allow_html=True)
+# Input form in a container
+st.markdown('<div class="input-container">', unsafe_allow_html=True)
+st.markdown('<h3 class="section-header">Enter Your Financial Information</h3>', unsafe_allow_html=True)
 
-# Use columns for the form layout
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    income = st.number_input("Annual Income ($)", min_value=0, value=50000, step=1000, format="%d")
+    income = st.number_input("Annual Income ($)", min_value=0, value=50000, step=1000)
 with col2:
-    deductions = st.number_input("Total Deductions ($)", min_value=0, value=12000, step=1000, format="%d")
+    deductions = st.number_input("Total Deductions ($)", min_value=0, value=12000, step=1000)
 with col3:
     filing_status = st.selectbox(
         "Filing Status",
@@ -337,14 +367,15 @@ if deductions > income:
     st.error("Deductions cannot exceed income. Please adjust your inputs.")
     st.stop()
 
-# Buttons in a row
-col_btn1, col_btn2 = st.columns([1, 1])
+# Buttons in a row with more space
+st.markdown("<div style='height: 20px'></div>", unsafe_allow_html=True)
+col_btn1, col_space, col_btn2 = st.columns([1, 0.2, 1])
 with col_btn1:
     calculate = st.button("Calculate Tax")
 with col_btn2:
     reset = st.button("Reset")
 
-st.markdown('</div>', unsafe_allow_html=True)  # Close the glass card
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Reset form if clicked
 if reset:
@@ -357,10 +388,6 @@ if calculate:
     # Traditional calculation
     traditional_tax = calculator.calculate_tax(income, deductions, filing_status)
     
-    # Results container
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-header">💡 Tax Analysis Results</div>', unsafe_allow_html=True)
-    
     # ML prediction if model is loaded
     if model_loaded:
         try:
@@ -369,18 +396,24 @@ if calculate:
             predicted_tax = predictor.predict_tax(processed_input)[0]
             
             # Display results in a styled container
-            st.markdown('<div class="metric-container">', unsafe_allow_html=True)
-            st.markdown(
-                f'<div class="metric-box traditional"><div class="metric-label">Traditional Calculation</div>'
-                f'<div class="metric-value">${traditional_tax:,.2f}</div></div>',
-                unsafe_allow_html=True
-            )
-            st.markdown(
-                f'<div class="metric-box ml"><div class="metric-label">ML-Based Prediction</div>'
-                f'<div class="metric-value">${predicted_tax:,.2f}</div></div>',
-                unsafe_allow_html=True
-            )
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('<div class="results-container">', unsafe_allow_html=True)
+            st.markdown('<h3 class="section-header">Tax Analysis Results</h3>', unsafe_allow_html=True)
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown(
+                    '<div class="metric-box"><div class="metric-label">Traditional Tax Calculation</div>'
+                    f'<div class="metric-value">${traditional_tax:,.2f}</div></div>',
+                    unsafe_allow_html=True
+                )
+            with col2:
+                st.markdown(
+                    '<div class="metric-box"><div class="metric-label">ML-Based Prediction</div>'
+                    f'<div class="metric-value-alt">${predicted_tax:,.2f}</div></div>',
+                    unsafe_allow_html=True
+                )
+
+            st.markdown("<div style='height: 30px'></div>", unsafe_allow_html=True)
             
             # Export to Excel
             result_df = pd.DataFrame({
@@ -394,76 +427,70 @@ if calculate:
             excel_data = output.getvalue()
 
             st.download_button(
-                label="💾 Export to Excel",
+                label="Export to Excel",
                 data=excel_data,
                 file_name="tax_calculation_results.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 key="download-excel"
             )
 
-            # Plot comparison with improved styling
-            st.markdown('<div class="chart-container">', unsafe_allow_html=True)
-            st.markdown("#### Tax Calculation Comparison", unsafe_allow_html=True)
+            # Plot comparison with light theme styling
+            st.markdown("<div style='height: 30px'></div>", unsafe_allow_html=True)
+            st.markdown('<h3 class="section-header">Tax Calculation Comparison</h3>', unsafe_allow_html=True)
             
-            # Create a more modern figure
-            fig, ax = plt.subplots(figsize=(10, 4.5))
+            # Configure plot with light theme
+            plt.style.use('default')
+            fig, ax = plt.subplots(figsize=(6, 4))
+            fig.patch.set_facecolor('#ffffff')
+            ax.set_facecolor('#ffffff')
             
-            # Use a more professional color palette
-            bar_colors = ['#3B82F6', '#10B981']
+            # Create gradient color for bars
+            bar_colors = ['#0ea5e9', '#0d9488']
+            ax.bar(['Traditional', 'ML Prediction'], [traditional_tax, predicted_tax], color=bar_colors)
             
-            # Create bar chart
-            bars = ax.bar(['Traditional Calculation', 'ML Prediction'], 
-                  [traditional_tax, predicted_tax], 
-                  color=bar_colors, 
-                  width=0.5)
-            
-            # Add value labels on top of bars
-            for i, bar in enumerate(bars):
-                height = bar.get_height()
-                value = traditional_tax if i == 0 else predicted_tax
-                ax.text(bar.get_x() + bar.get_width()/2., height + 0.01 * max(traditional_tax, predicted_tax),
-                       f'${value:,.2f}', ha='center', va='bottom', fontsize=11, fontweight='bold')
-            
-            # Customize the figure appearance
-            ax.set_ylabel('Tax Amount ($)', fontsize=12)
+            # Style the plot
+            ax.set_ylabel('Tax Amount ($)', fontsize=12, color='#0f172a')
+            ax.set_title('Tax Calculation Comparison', fontsize=14, pad=15, color='#0f172a')
+            ax.set_ylim(0, max(traditional_tax, predicted_tax) * 1.2)
+            ax.tick_params(colors='#1e293b')
+            ax.spines['bottom'].set_color('#e2e8f0')
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
-            ax.spines['left'].set_color('#DDE1E4')
-            ax.spines['bottom'].set_color('#DDE1E4')
-            ax.tick_params(axis='both', colors='#64748B')
-            ax.set_ylim(0, max(traditional_tax, predicted_tax) * 1.15)
-            ax.grid(axis='y', linestyle='-', alpha=0.2)
+            ax.spines['left'].set_color('#e2e8f0')
+            ax.grid(axis='y', linestyle='--', alpha=0.2, color='#94a3b8')
             
-            # Remove the title since we already have one in markdown
+            # Add value labels
+            for i, v in enumerate([traditional_tax, predicted_tax]):
+                ax.text(i, v + max(traditional_tax, predicted_tax) * 0.05, f'${v:,.2f}', 
+                        ha='center', fontsize=10, color='#0f172a')
+            
             fig.tight_layout()
-            
-            # Display the plot
             st.pyplot(fig)
-            st.markdown('</div>', unsafe_allow_html=True)
             
+            st.markdown('</div>', unsafe_allow_html=True)
         except Exception as e:
             st.error(f"ML prediction failed: {e}")
             # Only show traditional tax without redundant "Calculated Tax"
-            st.markdown('<div class="metric-container">', unsafe_allow_html=True)
+            st.markdown('<div class="results-container">', unsafe_allow_html=True)
+            st.markdown('<h3 class="section-header">Tax Analysis Results</h3>', unsafe_allow_html=True)
             st.markdown(
-                f'<div class="metric-box traditional"><div class="metric-label">Traditional Calculation</div>'
+                '<div class="metric-box"><div class="metric-label">Traditional Tax Calculation</div>'
                 f'<div class="metric-value">${traditional_tax:,.2f}</div></div>',
                 unsafe_allow_html=True
             )
             st.markdown('</div>', unsafe_allow_html=True)
     else:
-        st.markdown('<div class="metric-container">', unsafe_allow_html=True)
+        st.markdown('<div class="results-container">', unsafe_allow_html=True)
+        st.markdown('<h3 class="section-header">Tax Analysis Results</h3>', unsafe_allow_html=True)
         st.markdown(
-            f'<div class="metric-box traditional"><div class="metric-label">Traditional Calculation</div>'
+            '<div class="metric-box"><div class="metric-label">Traditional Tax Calculation</div>'
             f'<div class="metric-value">${traditional_tax:,.2f}</div></div>',
             unsafe_allow_html=True
         )
         st.markdown('</div>', unsafe_allow_html=True)
-    
-    st.markdown('</div>', unsafe_allow_html=True)  # Close the glass card
 
-# Sample Data Viewer with improved styling
-with st.expander("📋 View Sample Tax Data"):
+# Sample Data Viewer
+with st.expander("View Sample Tax Data"):
     sample_data = calculator.load_sample_data()
     if sample_data is not None:
         st.dataframe(sample_data.style.format({
@@ -474,47 +501,23 @@ with st.expander("📋 View Sample Tax Data"):
     else:
         st.write("No sample data available.")
 
-# How It Works section with enhanced styling
-with st.expander("🧠 How It Works"):
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("""
-        ### Traditional Calculation
-        
-        This method uses the <span class="accent-text">2024 IRS tax rates</span> and applies standard tax brackets based on your filing status:
-        
-        1. Calculate taxable income (income minus deductions)
-        2. Apply progressive tax rates to different portions of income
-        3. Sum up tax amounts from each bracket
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        ### ML-Based Prediction
-        
-        The <span class="accent-text">machine learning model</span> is trained on historical tax data to identify patterns:
-        
-        1. Preprocesses financial data using feature scaling
-        2. Uses a Lasso regression algorithm to detect complex relationships
-        3. Considers factors that traditional methods might miss
-        4. Provides predictions that adapt to changing patterns
-        """, unsafe_allow_html=True)
-    
-    st.markdown("""
-    ### Supported Filing Statuses:
-    
-    - **Single**: For individuals filing alone
-    - **Married Filing Jointly**: For married couples filing together
-    - **Head of Household**: For unmarried individuals who pay for keeping up a home
-    
-    <div style="background-color: #EFF6FF; padding: 1rem; border-radius: 8px; margin-top: 1rem; border-left: 4px solid #3B82F6;">
-    <strong>Note</strong>: Tax brackets and rates are based on 2024 IRS guidelines. Always consult a tax professional for official advice.
-    </div>
-    """, unsafe_allow_html=True)
+# Additional Information
+with st.expander("How It Works"):
+    st.write("""
+    **TaxSense ML** uses two methods to estimate your tax liability:
+    - **Traditional Tax Bracket Calculation**: Based on 2024 IRS tax rates, this method applies standard tax brackets for your filing status.
+    - **Machine Learning Prediction**: A Lasso regression model trained on historical tax data predicts your tax liability by analyzing patterns in income and deductions.
 
-# Footer with sleek styling
-st.markdown(
-    '<div class="footer">© 2025 TaxGenius ML • This application is for educational purposes only • Not financial advice</div>',
-    unsafe_allow_html=True
-)
+    ### Supported Filing Statuses:
+    - **Single**
+    - **Married Filing Jointly**
+    - **Head of Household**
+
+    ### How the ML Model Works:
+    The ML model is trained on synthetic data simulating various income levels, deductions, and filing statuses. It uses a Lasso regression algorithm to identify relationships between inputs and tax outcomes, providing a prediction that can adapt to complex patterns.
+
+    **Note**: Tax brackets and rates are based on 2024 IRS guidelines. Always consult a tax professional for official advice.
+    """)
+
+# Footer
+st.markdown('<div class="footer">© 2025 TaxSense ML. This is an estimation tool and should not be used as official tax advice.</div>', unsafe_allow_html=True)
